@@ -1,0 +1,148 @@
+[gd_scene load_steps=18 format=3 uid="uid://74dxxv6jiius"]
+
+[ext_resource type="PackedScene" uid="uid://d35raald5n7kc" path="res://ship.tscn" id="1_msuqr"]
+[ext_resource type="Script" path="res://Game.gd" id="1_qa0tr"]
+[ext_resource type="Script" path="res://Lights.gd" id="3_puhea"]
+[ext_resource type="Script" path="res://Asteroids.gd" id="4_5mbnt"]
+[ext_resource type="PackedScene" uid="uid://5c410je04veg" path="res://gui.tscn" id="5_pp2yh"]
+
+[sub_resource type="Environment" id="Environment_uvw5h"]
+background_mode = 3
+glow_enabled = true
+glow_intensity = 1.0
+glow_strength = 1.4
+glow_bloom = 0.1
+glow_blend_mode = 0
+adjustment_enabled = true
+adjustment_contrast = 1.08
+
+[sub_resource type="Gradient" id="Gradient_ghya4"]
+colors = PackedColorArray(0, 0, 0, 1, 0.255522, 2.51182e-07, 6.01634e-08, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_3bl4b"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_drc08"]
+width = 1024
+height = 1024
+seamless = true
+color_ramp = SubResource("Gradient_ghya4")
+noise = SubResource("FastNoiseLite_3bl4b")
+
+[sub_resource type="Gradient" id="Gradient_eldb1"]
+colors = PackedColorArray(0, 0, 0, 0, 0.773856, 7.70092e-07, 5.77569e-07, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_52428"]
+noise_type = 3
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ubie8"]
+width = 1024
+height = 1024
+seamless = true
+color_ramp = SubResource("Gradient_eldb1")
+noise = SubResource("FastNoiseLite_52428")
+
+[sub_resource type="Gradient" id="Gradient_1e8da"]
+offsets = PackedFloat32Array(0, 0.675325)
+colors = PackedColorArray(0.589096, 0.589096, 0.589096, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_k3rxh"]
+gradient = SubResource("Gradient_1e8da")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.509174, 0.486239)
+fill_to = Vector2(0.00458716, 1)
+
+[sub_resource type="Gradient" id="Gradient_j2u4w"]
+colors = PackedColorArray(0, 0, 0, 0, 1, 0, 0, 0.623529)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_e036o"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_lsttn"]
+seamless = true
+color_ramp = SubResource("Gradient_j2u4w")
+noise = SubResource("FastNoiseLite_e036o")
+
+[node name="World" type="Node2D"]
+
+[node name="modulate" type="CanvasModulate" parent="."]
+position = Vector2(2, 6)
+scale = Vector2(4.99414, 3.33203)
+color = Color(0.329412, 0.329412, 0.329412, 1)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_uvw5h")
+
+[node name="Background" type="ParallaxBackground" parent="."]
+layer = 0
+
+[node name="Layer2" type="ParallaxLayer" parent="Background"]
+motion_scale = Vector2(0.5, 0.5)
+motion_mirroring = Vector2(2048, 2048)
+
+[node name="BG2" type="Sprite2D" parent="Background/Layer2"]
+scale = Vector2(2, 2)
+texture = SubResource("NoiseTexture2D_drc08")
+centered = false
+
+[node name="Layer" type="ParallaxLayer" parent="Background"]
+light_mask = 2
+motion_mirroring = Vector2(3072, 3072)
+
+[node name="BackgroundSprite" type="Sprite2D" parent="Background/Layer"]
+light_mask = 2
+position = Vector2(-18.0001, 14)
+scale = Vector2(3, 3)
+texture = SubResource("NoiseTexture2D_ubie8")
+centered = false
+
+[node name="Game" type="CanvasLayer" parent="."]
+follow_viewport_enabled = true
+script = ExtResource("1_qa0tr")
+
+[node name="Ship" parent="Game" instance=ExtResource("1_msuqr")]
+
+[node name="Camera2D" type="Camera2D" parent="Game/Ship"]
+visible = false
+
+[node name="Lights" type="Sprite2D" parent="Game"]
+position = Vector2(-579, -324)
+script = ExtResource("3_puhea")
+
+[node name="light" type="PointLight2D" parent="Game/Lights"]
+z_index = 2
+energy = 3.28
+texture = SubResource("GradientTexture2D_k3rxh")
+texture_scale = 10.0
+height = 100.0
+
+[node name="shadow" type="PointLight2D" parent="Game/Lights"]
+z_index = 2
+range_item_cull_mask = 2
+shadow_enabled = true
+texture = SubResource("GradientTexture2D_k3rxh")
+texture_scale = 10.0
+height = 100.0
+
+[node name="Asteroids" type="Node2D" parent="Game"]
+script = ExtResource("4_5mbnt")
+
+[node name="Foreground" type="ParallaxBackground" parent="."]
+layer = 2
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="Foreground"]
+motion_scale = Vector2(2, 2)
+motion_mirroring = Vector2(2048, 2048)
+
+[node name="Sprite2D" type="Sprite2D" parent="Foreground/ParallaxLayer"]
+scale = Vector2(4, 4)
+texture = SubResource("NoiseTexture2D_lsttn")
+centered = false
+
+[node name="GuiLayer" type="CanvasLayer" parent="."]
+layer = 3
+
+[node name="Gui" parent="GuiLayer" instance=ExtResource("5_pp2yh")]
+
+[connection signal="change_energy" from="Game/Ship" to="GuiLayer/Gui" method="set_energy_bar"]
+[connection signal="change_health" from="Game/Ship" to="GuiLayer/Gui" method="set_health_bar"]

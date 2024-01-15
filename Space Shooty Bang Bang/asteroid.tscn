@@ -1,0 +1,31 @@
+[gd_scene load_steps=5 format=3 uid="uid://dqlfoulpcq3re"]
+
+[ext_resource type="Texture2D" uid="uid://dh0mpwi4d1tln" path="res://asteroid.png" id="1_mvjus"]
+[ext_resource type="Script" path="res://asteroid.gd" id="1_qu7ky"]
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_bwkg6"]
+polygon = PackedVector2Array(3, -30, -4, -28, -14, -21, -19, -12, -18, -5, -20, 9, -16, 19, -8, 25, 1, 24, 15, 15, 23, 4, 28, -5, 24, -13, 20, -15, 14, -26)
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_04gnv"]
+radius = 21.0
+height = 56.0
+
+[node name="Asteroid" type="RigidBody2D"]
+mass = 40000.0
+gravity_scale = 0.0
+max_contacts_reported = 2
+contact_monitor = true
+constant_torque = 10.0
+script = ExtResource("1_qu7ky")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_mvjus")
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+occluder = SubResource("OccluderPolygon2D_bwkg6")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(1, -2)
+shape = SubResource("CapsuleShape2D_04gnv")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

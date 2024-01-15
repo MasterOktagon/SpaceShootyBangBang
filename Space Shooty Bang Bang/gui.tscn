@@ -1,0 +1,46 @@
+[gd_scene load_steps=6 format=3 uid="uid://5c410je04veg"]
+
+[ext_resource type="Script" path="res://gui.gd" id="1_aiy7j"]
+[ext_resource type="Texture2D" uid="uid://cnlsqckvprwt2" path="res://healthbar_empty.png" id="1_vohgg"]
+[ext_resource type="Texture2D" uid="uid://brvmlcsi0f3d4" path="res://healthbar.png" id="2_teyby"]
+[ext_resource type="Texture2D" uid="uid://5hn6enh0gpa5" path="res://energybar_empty.png" id="4_5jhg2"]
+[ext_resource type="Texture2D" uid="uid://bkmq2uyj8tvw3" path="res://energybar.png" id="5_7ik3c"]
+
+[node name="Gui" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_aiy7j")
+
+[node name="healthBar" type="TextureProgressBar" parent="."]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 10.0
+offset_right = 199.0
+offset_bottom = 38.0
+value = 100.0
+nine_patch_stretch = true
+stretch_margin_left = 8
+stretch_margin_top = 10
+stretch_margin_right = 8
+stretch_margin_bottom = 8
+texture_under = ExtResource("1_vohgg")
+texture_progress = ExtResource("2_teyby")
+
+[node name="energyBar" type="TextureProgressBar" parent="."]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 38.0
+offset_right = 199.0
+offset_bottom = 66.0
+value = 50.0
+nine_patch_stretch = true
+stretch_margin_left = 8
+stretch_margin_top = 8
+stretch_margin_right = 8
+stretch_margin_bottom = 8
+texture_under = ExtResource("4_5jhg2")
+texture_progress = ExtResource("5_7ik3c")

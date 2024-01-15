@@ -1,0 +1,110 @@
+[gd_scene load_steps=18 format=3 uid="uid://d35raald5n7kc"]
+
+[ext_resource type="Texture2D" uid="uid://dji1ovmhv727e" path="res://Shipv1.png" id="1_0a20m"]
+[ext_resource type="Script" path="res://ship.gd" id="2_6grrk"]
+[ext_resource type="Texture2D" uid="uid://dp8df6m013nwl" path="res://Shipv1normal.png" id="3_00yw3"]
+[ext_resource type="Texture2D" uid="uid://sr3n6ttm0ntc" path="res://Shipv1thrust.png" id="3_yf53p"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q7v1t"]
+atlas = ExtResource("3_yf53p")
+region = Rect2(30, 0, 30, 31)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_5etgu"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_0a20m")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_q7v1t")
+}],
+"loop": true,
+"name": &"thrust",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_xmr8a"]
+radius = 12.0
+height = 28.0
+
+[sub_resource type="Curve" id="Curve_emt0y"]
+_data = [Vector2(0.00666666, 1), 0.0, 0.0, 0, 0, Vector2(0.54, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_kxek3"]
+curve = SubResource("Curve_emt0y")
+
+[sub_resource type="Curve" id="Curve_881bu"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_wshkg"]
+curve = SubResource("Curve_881bu")
+
+[sub_resource type="Curve" id="Curve_aqa8m"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_w6uni"]
+curve = SubResource("Curve_aqa8m")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_hmmtg"]
+particle_flag_disable_z = true
+emission_shape_scale = Vector3(3, 3, 3)
+spread = 0.0
+radial_velocity_max = 1.0
+radial_velocity_curve = SubResource("CurveTexture_wshkg")
+gravity = Vector3(0, 0, 0)
+scale_max = 3.0
+scale_curve = SubResource("CurveTexture_w6uni")
+alpha_curve = SubResource("CurveTexture_kxek3")
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_p2220"]
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_wv4hv"]
+polygon = PackedVector2Array(3, -16, 8, -8, 9, -2, 15, 4, 15, 10, 3, 10, 1, 7, -1, 7, -3, 10, -15, 10, -15, 4, -9, -2, -8, -8, -3, -16, -2, -16, 0, -7, 2, -16)
+
+[sub_resource type="CanvasTexture" id="CanvasTexture_ax2cy"]
+diffuse_texture = ExtResource("1_0a20m")
+normal_texture = ExtResource("3_00yw3")
+
+[node name="Ship" type="RigidBody2D"]
+mass = 10000.0
+gravity_scale = 0.0
+continuous_cd = 1
+max_contacts_reported = 3
+contact_monitor = true
+script = ExtResource("2_6grrk")
+
+[node name="Camera" type="Camera2D" parent="."]
+
+[node name="Tex" type="AnimatedSprite2D" parent="."]
+light_mask = 3
+z_index = 7
+sprite_frames = SubResource("SpriteFrames_5etgu")
+animation = &"idle"
+
+[node name="Shape" type="CollisionShape2D" parent="."]
+position = Vector2(0, -2)
+shape = SubResource("CapsuleShape2D_xmr8a")
+
+[node name="Emission" type="GPUParticles2D" parent="."]
+position = Vector2(0, 7)
+rotation = 1.57577
+amount = 30
+process_material = SubResource("ParticleProcessMaterial_hmmtg")
+texture = SubResource("PlaceholderTexture2D_p2220")
+
+[node name="occluder" type="LightOccluder2D" parent="."]
+occluder = SubResource("OccluderPolygon2D_wv4hv")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+visible = false
+texture = SubResource("CanvasTexture_ax2cy")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

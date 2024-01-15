@@ -1,0 +1,38 @@
+[gd_scene load_steps=6 format=3 uid="uid://cio8s3h7xp1n5"]
+
+[ext_resource type="Script" path="res://bullet.gd" id="1_13q8v"]
+[ext_resource type="Texture2D" uid="uid://bbkkj08a6qxdv" path="res://projectile.png" id="1_stp65"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1x6ny"]
+size = Vector2(2, 6)
+
+[sub_resource type="Gradient" id="Gradient_huhnt"]
+offsets = PackedFloat32Array(0.331169, 0.746753)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_fsx0e"]
+gradient = SubResource("Gradient_huhnt")
+fill = 1
+fill_from = Vector2(0.504587, 0.486239)
+
+[node name="Bullet" type="RigidBody2D"]
+gravity_scale = 0.0
+max_contacts_reported = 2
+contact_monitor = true
+script = ExtResource("1_13q8v")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_stp65")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -1)
+shape = SubResource("RectangleShape2D_1x6ny")
+
+[node name="Life" type="Timer" parent="."]
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+color = Color(1, 1, 0.396078, 1)
+texture = SubResource("GradientTexture2D_fsx0e")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="timeout" from="Life" to="." method="_on_life_timeout"]
